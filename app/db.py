@@ -44,18 +44,21 @@ class Database:
             print(f"[DB] MongoDB ไม่พร้อม ({e}) -> memory-only (ไม่ persist)")
 
     # ------------------------------------------------------------------
-    def insert_detection(self, cls, cam_id, cam_label, conf, ts=None):
-        """บันทึก 1 event — เรียกตอนรถฉุกเฉินโผล่ใหม่ (ดู state.update)"""
+    def insert_detection(self, cls, cam_id, cam_label, conf, ts=None, track_id=None):
+        """บันทึก 1 event — เรียกตอนรถฉุกเฉินโผล่ใหม่/track ใหม่ (ดู state.update)"""
         if not self.enabled:
             return
         try:
-            self.detections.insert_one({
+            doc = {
                 "class":     cls,
                 "cam":       cam_id,
                 "cam_label": cam_label,
                 "conf":      float(conf),
                 "ts":        ts or datetime.now(timezone.utc),
-            })
+            }
+            if track_id is not None:
+                doc["track_id"] = int(track_id)
+            self.detections.insert_one(doc)
         except Exception as e:
             print(f"[DB] insert error: {e}")
 

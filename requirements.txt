@@ -9,6 +9,7 @@
 # แล้วค่อย:  pip install -r requirements.txt
 
 ultralytics>=8.0
+lap>=0.5.12          # ByteTrack association (object tracking) — ไม่งั้น ultralytics auto-download ตอน runtime
 opencv-python>=4.8
 fastapi>=0.104
 uvicorn>=0.24

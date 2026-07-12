@@ -54,6 +54,14 @@ TARGET_FPS = 20          # fps ของการเล่นวิดีโอ�
 # ===== เกณฑ์ class ที่ถือว่าเป็น "รถฉุกเฉิน" (ใช้ปรับสัญญาณไฟ) =====
 EMERGENCY_CLASSES = {"ambulance", "firetruck", "police"}
 
+# โมเดล output ชื่อ class ดิบบางอันไม่ตรงกับที่แอปใช้ → normalize ให้เป็นชื่อมาตรฐาน
+# (เช่น dataset ตั้งชื่อ "police_car" แต่ทั้งแอป/DB/UI ใช้ "police")
+CLASS_ALIASES = {"police_car": "police"}
+
+# ===== Object tracking (ByteTrack) =====
+# True = นับ "คัน" ต่อ track_id (แม่น ไม่นับซ้ำจาก flicker) · False = fallback นับแบบ frame set-diff เดิม
+USE_TRACKING = True
+
 # ===== Database (MongoDB) =====
 # อ่านจาก env ได้ (production) · default = local service ที่รันอยู่แล้วบนเครื่องนี้
 # ถ้า Mongo ไม่พร้อม → app ยังรันได้ (memory-only, ไม่ persist) ดู db.py

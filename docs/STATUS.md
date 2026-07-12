@@ -46,6 +46,12 @@
     - verify: /results 200, เลขจริงขึ้น, รูป /report เสิร์ฟ 200, ไม่มีเลขแต่งเหลือ · **run/ (44 ไฟล์, ~18MB) commit เป็นหลักฐาน** (weights .pt gitignore กันไว้)
     - **หมายเหตุ:** ผมยังไม่ได้เห็นหน้า Results ด้วยตา (verify แค่ HTML+รูป serve) — ผู้ใช้ควรเปิดดู layout จริง
 
+- **✅ D4 เสร็จ (2026-07-12) — Object Tracking (ByteTrack):**
+  - **tracker แยกต่อกล้อง** (`_make_tracker()` ใน camera.py) แชร์ model เดิม — ห้ามใช้ `model.track(persist)` ตรง ๆ เพราะ state ปนข้ามกล้อง · `detector.infer_raw()` คืน Results ดิบ → `tracker.update()` → track array 8 คอลัมน์ `[x1,y1,x2,y2,track_id,conf,cls,det_idx]`
+  - **นับ 'คัน' ไม่ใช่ 'เฟรม':** `state` นับ 1 ครั้งต่อ `(cam_id, track_id)` ใหม่ (`_seen_tracks`) → เลิกนับซ้ำจาก flicker · เก็บ `track_id` ลง DB ด้วย · **verify: 35 วิ 4 กล้อง นับ 12 คัน** (เดิม per-frame = 1242 docs!) · box วาด `#id` แล้ว
+  - **fallback ปลอดภัย:** `config.USE_TRACKING=False` → กลับไปนับ set-diff เดิม · tracker error → fallback infer (thread ไม่ตาย)
+  - **🔴 แก้ bug ที่ซ่อนอยู่:** โมเดล output class = **`police_car`** แต่แอปใช้ `"police"` → รถตำรวจไม่เคยถูกนับ/trigger ไฟเลย · แก้ด้วย `config.CLASS_ALIASES = {"police_car":"police"}` normalize ใน `detector.norm_name` (ใช้ทั้ง infer + tracking) · เพิ่ม `lap>=0.5.12` ใน requirements (ไม่งั้น auto-download ตอน runtime)
+
 ---
 
 ## ⚠️ ข้อจำกัด / หนี้ทางเทคนิค (ต้องรู้ก่อนพูดว่า "production-ready")
@@ -54,7 +60,7 @@
 |---|---|---|
 | **กล้อง** | ไฟล์ `.mp4` วนลูป | ไม่ใช่กล้องจริง — production ต้องต่อ RTSP/IP |
 | ~~**Persistence**~~ | ✅ **แก้แล้ว (D2)** — MongoDB `evd.detections` | restart แล้ว counts/log คืนจาก DB · มีข้อมูลย้อนหลังพร้อมทำหน้า History (D3) |
-| **Object tracking** | นับ frame-level (set diff) | รถคันเดิมหลุด frame แล้วกลับมา = นับซ้ำ · เลขไม่แม่นสำหรับรายงานจริง |
+| ~~**Object tracking**~~ | ✅ **แก้แล้ว (D4)** — ByteTrack ต่อกล้อง | นับต่อ track_id (คัน) ไม่ใช่เฟรม · เก็บ track_id ลง DB |
 | **สัญญาณไฟ** | display อย่างเดียว | ไม่ต่อฮาร์ดแวร์ · ไม่มี logic เลือกทิศเมื่อหลายกล้อง CLEAR พร้อมกัน |
 | **หน้า Results** | metric **hardcode ใน HTML** | mAP50/precision/dataset ไม่ได้มาจากผล eval จริง — ถ้ากรรมการถามที่มาต้องมีหลักฐานรองรับ |
 | **Auth** | ไม่มี | dashboard เปิดโล่ง — ห้ามเปิด public ก่อนใส่ auth |

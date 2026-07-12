@@ -74,6 +74,24 @@ class Detector:
     def color_for(self, name: str):
         return CLASS_COLORS.get(name.lower(), DEFAULT_COLOR)
 
+    @staticmethod
+    def norm_name(name: str) -> str:
+        """map ชื่อ class ดิบจากโมเดล → ชื่อมาตรฐานของแอป (เช่น police_car → police)"""
+        return config.CLASS_ALIASES.get(name, name)
+
+    def infer_raw(self, frame, model_key: str = "x", conf: float | None = None):
+        """เหมือน infer() แต่คืน ultralytics Results ดิบ (ให้ tracker ใช้ boxes ต่อ)"""
+        if conf is None:
+            conf = config.CONF_THRESHOLD
+        model = self.get_model(model_key)
+        t0 = time.time()
+        with self._lock:
+            results = model.predict(
+                frame, imgsz=config.IMG_SIZE, conf=conf, device=self.device, verbose=False,
+            )
+        self.last_infer_ms = (time.time() - t0) * 1000
+        return results[0]
+
     # ------------------------------------------------------------------
     def infer(self, frame, model_key: str = "x", conf: float | None = None) -> list[dict]:
         """ตรวจจับวัตถุใน 1 เฟรม — คืน list ของ detection dict"""
@@ -101,7 +119,7 @@ class Detector:
                 conf_val = float(box.conf[0])
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 dets.append({
-                    "name": names.get(cls_id, str(cls_id)),
+                    "name": self.norm_name(names.get(cls_id, str(cls_id))),
                     "conf": conf_val,
                     "box":  (x1, y1, x2, y2),
                 })
@@ -113,7 +131,9 @@ class Detector:
         for d in dets:
             x1, y1, x2, y2 = d["box"]
             color = self.color_for(d["name"])
-            label = f'{d["name"].upper()} {int(d["conf"] * 100)}%'
+            tid   = d.get("id")
+            id_str = f'#{tid} ' if tid is not None else ""
+            label = f'{id_str}{d["name"].upper()} {int(d["conf"] * 100)}%'
             cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
             (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
             cv2.rectangle(out, (x1, y1 - th - 8), (x1 + tw + 8, y1), color, -1)
