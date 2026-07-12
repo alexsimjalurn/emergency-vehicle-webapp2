@@ -100,7 +100,10 @@ def history_page(request: Request):
 
 @app.get("/about")
 def about_page(request: Request):
-    return templates.TemplateResponse(request, "about.html", {"active": "about"})
+    return templates.TemplateResponse(request, "about.html", {
+        "active": "about",
+        "report": MODEL_REPORT,
+    })
 
 
 # ===== Dashboard streams / stats =====

@@ -7,8 +7,8 @@
 
 ## เฟสปัจจุบัน
 
-**Prototype รัน local** — ยังไม่ deploy production
-เป้าหมายเฉพาะหน้า: พาไป **production ให้ทันวัน present** (ดู `PRODUCTION_ROADMAP.md`)
+**Feature-complete สำหรับ present** (D1–D5 เสร็จครบใน 2026-07-12) — รัน local, GPU, MongoDB, tracking, analytics, Results เลขจริง
+เหลือ: merge เข้า main (freeze) + ผู้ใช้เตรียมคลิป/ซ้อมตาม `DEMO.md` · ของแถม (auth/Docker/signal-logic) ยังไม่ทำ (optional)
 
 ---
 
@@ -51,6 +51,13 @@
   - **นับ 'คัน' ไม่ใช่ 'เฟรม':** `state` นับ 1 ครั้งต่อ `(cam_id, track_id)` ใหม่ (`_seen_tracks`) → เลิกนับซ้ำจาก flicker · เก็บ `track_id` ลง DB ด้วย · **verify: 35 วิ 4 กล้อง นับ 12 คัน** (เดิม per-frame = 1242 docs!) · box วาด `#id` แล้ว
   - **fallback ปลอดภัย:** `config.USE_TRACKING=False` → กลับไปนับ set-diff เดิม · tracker error → fallback infer (thread ไม่ตาย)
   - **🔴 แก้ bug ที่ซ่อนอยู่:** โมเดล output class = **`police_car`** แต่แอปใช้ `"police"` → รถตำรวจไม่เคยถูกนับ/trigger ไฟเลย · แก้ด้วย `config.CLASS_ALIASES = {"police_car":"police"}` normalize ใน `detector.norm_name` (ใช้ทั้ง infer + tracking) · เพิ่ม `lap>=0.5.12` ใน requirements (ไม่งั้น auto-download ตอน runtime)
+
+- **✅ D5 เสร็จ (2026-07-12) — Polish + เตรียม demo:**
+  - **หน้า About** ดึงเลขจริงจาก report (เลิก hardcode 97.54% ที่ผิด) + แก้ Python 3.11→3.12 + เพิ่ม MongoDB/ByteTrack/CUDA
+  - **`docs/DEMO.md`** — runbook วัน present: pre-flight checklist, ลำดับนำเสนอ, talking points (เลขจริง), Q&A กรรมการ, แผนสำรอง, ข้อควรระวัง
+  - **`scripts/reset_data.py`** — ล้าง detection ก่อน present (clean slate)
+  - **README** อัปเดต — features, ขั้นลง **torch CUDA แยกก่อน requirements** (กัน CPU-only), MongoDB requirement
+  - verify: /about, /results render เลขจริง 200 · scripts compile ไม่มี warning
 
 ---
 
