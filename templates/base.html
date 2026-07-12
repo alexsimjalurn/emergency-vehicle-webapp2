@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}EVD System{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css?v=6">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- About bar -->
+  <div class="about-bar">
+    <img src="/static/logo.png" class="about-logo" alt="NUOL">
+    <span class="about-uni">ມະຫາວິທະຍາໄລແຫ່ງຊາດ</span>
+    <span class="about-sep">·</span>
+    <span>ຄະນະວິທະຍາສາດທຳມະຊາດ</span>
+    <span class="about-sep">·</span>
+    <span>ວິທະຍາສາດຄອມພິວເຕີ</span>
+    <div class="about-badge">FYP 2025–26</div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- ===== Global Left Sidebar ===== -->
+    <aside class="app-sidebar" id="appSidebar">
+
+      <div class="asb-header">
+        <div class="asb-brand">
+          <span class="asb-brand-icon">🚨</span>
+          <span class="asb-brand-text">EVD System</span>
+        </div>
+        <button class="asb-toggle-btn" id="sidebarToggle" title="ພັບ/ຂະຫຍາຍ">
+          <span class="asb-chevron">◀</span>
+        </button>
+      </div>
+
+      <nav class="asb-nav">
+
+        <a class="asb-item {% if active == 'home' %}active{% endif %}" href="/">
+          <span class="asb-icon">🏠</span>
+          <span class="asb-label">ໜ້າຫຼັກ</span>
+        </a>
+        <a class="asb-item {% if active == 'dashboard' %}active{% endif %}" href="/dashboard">
+          <span class="asb-icon">📺</span>
+          <span class="asb-label">Dashboard</span>
+        </a>
+
+        <div class="asb-divider"><span>ກວດຈັບ</span></div>
+
+        <a class="asb-item {% if active == 'image' %}active{% endif %}" href="/detect?tab=image">
+          <span class="asb-icon">🔍</span>
+          <span class="asb-label">ກວດຈັບຮູບພາບ</span>
+        </a>
+        <a class="asb-item {% if active == 'video' %}active{% endif %}" href="/detect?tab=video">
+          <span class="asb-icon">🎬</span>
+          <span class="asb-label">ກວດຈັບວິດີໂອ</span>
+        </a>
+        <a class="asb-item {% if active == 'webcam' %}active{% endif %}" href="/detect?tab=webcam">
+          <span class="asb-icon">📹</span>
+          <span class="asb-label">ກ້ອງ Real-time</span>
+        </a>
+
+        <div class="asb-divider"><span>ຂໍ້ມູນ</span></div>
+
+        <a class="asb-item {% if active == 'results' %}active{% endif %}" href="/results">
+          <span class="asb-icon">📊</span>
+          <span class="asb-label">ຜົນການທົດສອບ</span>
+        </a>
+        <a class="asb-item {% if active == 'about' %}active{% endif %}" href="/about">
+          <span class="asb-icon">ℹ️</span>
+          <span class="asb-label">ກ່ຽວກັບລະບົບ</span>
+        </a>
+
+      </nav>
+
+      <!-- Model + Confidence controls -->
+      <div class="asb-controls">
+        <div class="asb-ctrl-section-label">ຕັ້ງຄ່າ</div>
+        <div class="asb-ctrl-group">
+          <label class="asb-ctrl-label">ໂມເດລ</label>
+          <select id="modelSelect" class="asb-ctrl-select">
+            <option value="x">YOLOv8x · ຖືກຕ້ອງ</option>
+            <option value="m" selected>YOLOv8m · ໄວ</option>
+          </select>
+        </div>
+        <div class="asb-ctrl-group">
+          <label class="asb-ctrl-label">
+            Confidence <span id="confVal" class="asb-conf-badge">0.25</span>
+          </label>
+          <input type="range" id="confSlider" min="0" max="1" step="0.01"
+                 value="0.25" class="asb-ctrl-slider">
+        </div>
+      </div>
+
+    </aside><!-- /app-sidebar -->
+
+    <!-- ===== Page Content ===== -->
+    <div class="app-content">
+
+      <header class="page-header">
+        <div class="page-header-left">
+          <div class="logo-dot"></div>
+          <div>
+            <div class="page-title">{% block page_title %}EVD System{% endblock %}</div>
+            <div class="page-sub" id="pageSub">{% block page_sub %}{% endblock %}</div>
+          </div>
+        </div>
+        <div class="page-header-right">
+          {% block header_right %}{% endblock %}
+          <div class="clock" id="clk">--:--:--</div>
+        </div>
+      </header>
+
+      <div class="page-body">
+        {% block content %}{% endblock %}
+      </div>
+
+    </div><!-- /app-content -->
+
+  </div><!-- /app-body -->
+
+  <footer class="app-footer">
+    <span class="bb-dot"></span>
+    <span>ໂມເດລ: <span class="model-tag" id="footerModel">YOLOv8m</span></span>
+    <span class="bb-sep">·</span>
+    {% block footer_extra %}{% endblock %}
+    <span>NUOL · ວິທະຍາສາດຄອມພິວເຕີ · FYP 2025–26</span>
+  </footer>
+
+</div><!-- /app-shell -->
+
+<script src="/static/base.js?v=1"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

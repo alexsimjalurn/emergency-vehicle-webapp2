@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · EVD{% endblock %}
+{% block page_title %}ຕິດຕາມ Real-time{% endblock %}
+{% block page_sub %}4 ກ້ອງ · ສັນຍານໄຟ · ບັນທຶກ{% endblock %}
+
+{% block header_right %}
+  {% if not using_custom %}
+  <div class="status-badge warn">ໂມເດລ Pretrained</div>
+  {% endif %}
+  <div class="status-badge">ລະບົບໃຊ້ງານ</div>
+{% endblock %}
+
+{% block content %}
+<div class="dash-main">
+
+  <!-- Top row: 4 cameras (left) + traffic lights (right) -->
+  <div class="dash-top">
+
+    <div class="cam-grid">
+      {% for cam_id, label in cameras.items() %}
+      <div class="cam-cell">
+        <img class="cam-feed" src="/stream/{{ cam_id }}" alt="{{ label }}">
+        <div class="cam-label">{{ label }}</div>
+        <div class="cam-corner"><span class="rec-dot"></span><span class="rec-text">REC</span></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="dash-tl-panel">
+      <div class="section-title">ສັນຍານໄຟຈາລາຈອນ</div>
+      <div class="traffic-grid" id="trafficGrid">
+        {% for cam_id, label in cameras.items() %}
+        <div class="traffic-light" data-cam="{{ cam_id }}">
+          <div class="tl-label">{{ label.split('·')[1].strip() if '·' in label else label }}</div>
+          <div class="tl-box">
+            <div class="tl-bulb r"></div>
+            <div class="tl-bulb y"></div>
+            <div class="tl-bulb g"></div>
+          </div>
+          <div class="tl-status stop">STOP</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom row: alert log (left) + session stats (right) -->
+  <div class="dash-bottom">
+
+    <div class="dash-alerts">
+      <div class="section-title">ບັນທຶກການກວດຈັບ</div>
+      <div class="alert-list" id="alertList">
+        <div class="empty-hint">ລໍຖ້າການກວດຈັບ...</div>
+      </div>
+    </div>
+
+    <div class="dash-stats">
+      <div class="section-title">ສະຖິຕິ Session</div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num amb" id="cntAmb">0</div>
+          <div class="stat-lbl">AMBU</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num fire" id="cntFire">0</div>
+          <div class="stat-lbl">FIRE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num police" id="cntPolice">0</div>
+          <div class="stat-lbl">POLICE</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<span id="footerInf">ໃຊ້ເວລາ: --</span>
+<span class="bb-sep">·</span>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/app.js?v=3"></script>
+{% endblock %}

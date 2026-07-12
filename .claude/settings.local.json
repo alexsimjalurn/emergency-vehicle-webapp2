@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"C:\\\\Users\\\\GAMING\\\\Downloads\\\\emergency-vehicle-webapp2\"; $proc = Start-Process -FilePath \"python\" -ArgumentList \"-m\",\"uvicorn\",\"main:app\",\"--port\",\"8000\" -WorkingDirectory \"C:\\\\Users\\\\GAMING\\\\Downloads\\\\emergency-vehicle-webapp2\" -RedirectStandardOutput \"$env:TEMP\\\\evd_out.log\" -RedirectStandardError \"$env:TEMP\\\\evd_err.log\" -PassThru -WindowStyle Hidden; Write-Output \"PID: $\\($proc.Id\\)\")",
+      "PowerShell(C:\\\\Users\\\\GAMING\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe -m uvicorn --version 2>&1; C:\\\\Users\\\\GAMING\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe -m uvicorn --version 2>&1)"
+    ]
+  }
+}

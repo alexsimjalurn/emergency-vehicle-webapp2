@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}ລະບົບກວດຈັບຍານພາຫະນະສຸກເສີນ{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/landing.css?v=3">{% endblock %}
+{% block page_title %}ໜ້າຫຼັກ{% endblock %}
+{% block page_sub %}Emergency Vehicle Detection System{% endblock %}
+
+{% block header_right %}
+  <a href="/dashboard" class="lp-nav-pill">📺 Dashboard →</a>
+{% endblock %}
+
+{% block content %}
+<div class="lp-root">
+
+  <!-- Hero -->
+  <div class="lp-hero">
+    <div class="lp-hero-text">
+      <div class="lp-eyebrow">YOLOv8 · Real-time · 4 Cameras</div>
+      <h1 class="lp-title">ລະບົບກວດຈັບ<br><span>ຍານພາຫະນະສຸກເສີນ</span></h1>
+      <p class="lp-subtitle">Emergency Vehicle Detection System</p>
+      <p class="lp-desc">ກວດຈັບ Ambulance · Firetruck · Police ດ້ວຍ YOLOv8 ຈາກ 4 ກ້ອງວົງຈອນປິດ ພ້ອມປັບສັນຍານໄຟໂດຍອັດຕະໂນມັດ</p>
+      <div class="lp-btns">
+        <a href="/dashboard" class="lp-btn-primary">📺 ເຂົ້າສູ່ Dashboard</a>
+        <a href="/detect?tab=image" class="lp-btn-ghost">🔍 ທົດສອບ Detection</a>
+      </div>
+    </div>
+
+    <!-- Stats column -->
+    <div class="lp-stats-col">
+      <div class="lp-stat-card">
+        <div class="lp-stat-num">97.54<span>%</span></div>
+        <div class="lp-stat-lbl">mAP50</div>
+      </div>
+      <div class="lp-stat-card green">
+        <div class="lp-stat-num">95.03<span>%</span></div>
+        <div class="lp-stat-lbl">Precision</div>
+      </div>
+      <div class="lp-stat-card amber">
+        <div class="lp-stat-num">96.00<span>%</span></div>
+        <div class="lp-stat-lbl">Recall</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Class badges + links row -->
+  <div class="lp-bottom">
+
+    <div class="lp-classes">
+      <div class="lp-class-chip amb">🚑 Ambulance <span>98.3%</span></div>
+      <div class="lp-class-chip fire">🚒 Firetruck <span>97.1%</span></div>
+      <div class="lp-class-chip pol">🚔 Police <span>97.2%</span></div>
+    </div>
+
+    <div class="lp-links">
+      <a href="/dashboard"       class="lp-link"><span>📺</span><div><b>Dashboard</b><small>4 ກ້ອງ Real-time</small></div></a>
+      <a href="/detect?tab=image" class="lp-link"><span>🔍</span><div><b>ກວດຈັບຮູບພາບ</b><small>ອັບໂຫຼດ &amp; ກວດຈັບ</small></div></a>
+      <a href="/detect?tab=video" class="lp-link"><span>🎬</span><div><b>ກວດຈັບວິດີໂອ</b><small>Frame-by-frame</small></div></a>
+      <a href="/results"          class="lp-link"><span>📊</span><div><b>ຜົນການທົດສອບ</b><small>mAP · Precision · Recall</small></div></a>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

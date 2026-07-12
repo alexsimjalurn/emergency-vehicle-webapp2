@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}ຜົນການທົດສອບ · EVD{% endblock %}
+{% block page_title %}ຜົນການທົດສອບໂມເດລ{% endblock %}
+{% block page_sub %}YOLOv8x Custom · mAP50 = 97.54%{% endblock %}
+
+{% block content %}
+<div class="stats-wrap">
+
+  <!-- Overall metrics -->
+  <div class="stats-section-title">ຜົນລວມ (Overall Performance)</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-num">97.54<span style="font-size:16px">%</span></div>
+      <div class="metric-lbl">mAP50</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num green">95.03<span style="font-size:16px">%</span></div>
+      <div class="metric-lbl">Precision</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num amber">96.00<span style="font-size:16px">%</span></div>
+      <div class="metric-lbl">Recall</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num purple">72.31<span style="font-size:16px">%</span></div>
+      <div class="metric-lbl">mAP50-95</div>
+    </div>
+  </div>
+
+  <!-- Per-class breakdown -->
+  <div class="stats-section-title">ຜົນຕາມປະເພດ (Per-class)</div>
+  <div class="class-table-wrap">
+    <table class="class-table">
+      <thead>
+        <tr>
+          <th>ປະເພດ</th>
+          <th>Precision</th>
+          <th>Recall</th>
+          <th>mAP50</th>
+          <th>ກຣາຟ mAP50</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="class-dot" style="background:#ea580c"></span>
+            Ambulance
+          </td>
+          <td>96.4%</td>
+          <td>97.2%</td>
+          <td>98.3%</td>
+          <td>
+            <div class="bar-wrap">
+              <div class="bar" style="width:98.3px"></div>
+              <span class="bar-val">98.3%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="class-dot" style="background:#dc2626"></span>
+            Firetruck
+          </td>
+          <td>94.8%</td>
+          <td>95.1%</td>
+          <td>97.1%</td>
+          <td>
+            <div class="bar-wrap">
+              <div class="bar green" style="width:97.1px"></div>
+              <span class="bar-val">97.1%</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="class-dot" style="background:#2563eb"></span>
+            Police
+          </td>
+          <td>93.9%</td>
+          <td>95.8%</td>
+          <td>97.2%</td>
+          <td>
+            <div class="bar-wrap">
+              <div class="bar amber" style="width:97.2px"></div>
+              <span class="bar-val">97.2%</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Training config + Dataset -->
+  <div class="stats-section-title">ລາຍລະອຽດການຝຶກ</div>
+  <div class="info-grid">
+
+    <div class="info-card">
+      <div class="info-card-title">Training Configuration</div>
+      <div class="info-row">
+        <span class="info-key">ໂມເດລ</span>
+        <span class="info-val">YOLOv8x</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Epochs</span>
+        <span class="info-val">100</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Image Size</span>
+        <span class="info-val">640 × 640</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Batch Size</span>
+        <span class="info-val">16</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Optimizer</span>
+        <span class="info-val">SGD</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Learning Rate</span>
+        <span class="info-val">0.01</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Device</span>
+        <span class="info-val">GPU (CUDA)</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">Dataset</div>
+      <div class="info-row">
+        <span class="info-key">ຈຳນວນ Class</span>
+        <span class="info-val">3</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">ທັງໝົດ</span>
+        <span class="info-val">2,847 ຮູບ</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Training</span>
+        <span class="info-val">2,278 ຮູບ (80%)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Validation</span>
+        <span class="info-val">284 ຮູບ (10%)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Test</span>
+        <span class="info-val">285 ຮູບ (10%)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Augmentation</span>
+        <span class="info-val">mosaic, flip, hsv</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">ແຫຼ່ງຂໍ້ມູນ</span>
+        <span class="info-val">Roboflow + custom</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

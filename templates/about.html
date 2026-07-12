@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}ກ່ຽວກັບລະບົບ · EVD{% endblock %}
+{% block page_title %}ກ່ຽວກັບລະບົບ{% endblock %}
+{% block page_sub %}Emergency Vehicle Detection System{% endblock %}
+
+{% block content %}
+<div class="about-wrap">
+
+  <!-- Hero banner -->
+  <div class="about-hero">
+    <div class="about-hero-icon">🚨</div>
+    <div>
+      <div class="about-hero-title">ລະບົບກວດຈັບຍານພາຫະນະສຸກເສີນ</div>
+      <div class="about-hero-sub">Emergency Vehicle Detection System · EVD</div>
+    </div>
+  </div>
+
+  <!-- Project info -->
+  <div class="about-section">
+    <div class="about-section-title">ຂໍ້ມູນໂຄງການ</div>
+    <div class="about-row">
+      <span class="about-row-icon">🏫</span>
+      <span class="about-row-key">ມະຫາວິທະຍາໄລ</span>
+      <span class="about-row-val">ມະຫາວິທະຍາໄລແຫ່ງຊາດ (NUOL)</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">🏛️</span>
+      <span class="about-row-key">ຄະນະ</span>
+      <span class="about-row-val">ຄະນະວິທະຍາສາດທຳມະຊາດ</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">💻</span>
+      <span class="about-row-key">ພາກວິຊາ</span>
+      <span class="about-row-val">ວິທະຍາສາດຄອມພິວເຕີ</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">📋</span>
+      <span class="about-row-key">ໂຄງການ</span>
+      <span class="about-row-val">Final Year Project (FYP) 2025–26</span>
+    </div>
+  </div>
+
+  <!-- Objective -->
+  <div class="about-section">
+    <div class="about-section-title">ຈຸດປະສົງ</div>
+    <div class="about-row">
+      <span class="about-row-icon">🎯</span>
+      <span class="about-row-val" style="flex:1">
+        ກວດຈັບຍານພາຫະນະສຸກເສີນ 3 ປະເພດ (ລົດສຸກເສີນ, ລົດດັບໄຟ, ລົດຕຳຫຼວດ) ແບບ Real-time
+        ຈາກ 4 ກ້ອງວົງຈອນປິດໂດຍລອບສີ່ແຍກ ເພື່ອປັບສັນຍານໄຟຈາລາຈອນໂດຍອັດຕະໂນມັດ
+      </span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">🤖</span>
+      <span class="about-row-key">ໂມເດລ AI</span>
+      <span class="about-row-val">YOLOv8x / YOLOv8m (Ultralytics)</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">📊</span>
+      <span class="about-row-key">ຄວາມຖືກຕ້ອງ</span>
+      <span class="about-row-val">mAP50 = 97.54% · Precision = 95.03% · Recall = 96.00%</span>
+    </div>
+  </div>
+
+  <!-- Technology stack -->
+  <div class="about-section">
+    <div class="about-section-title">ເຕັກໂນໂລຊີ</div>
+    <div class="tech-grid">
+      <div class="tech-badge">
+        <span class="tb-icon">🐍</span>
+        Python 3.11
+        <div class="tb-sub">Backend language</div>
+      </div>
+      <div class="tech-badge">
+        <span class="tb-icon">⚡</span>
+        FastAPI
+        <div class="tb-sub">Web framework</div>
+      </div>
+      <div class="tech-badge">
+        <span class="tb-icon">🤖</span>
+        YOLOv8
+        <div class="tb-sub">Object detection</div>
+      </div>
+      <div class="tech-badge">
+        <span class="tb-icon">🔥</span>
+        PyTorch
+        <div class="tb-sub">Deep learning</div>
+      </div>
+      <div class="tech-badge">
+        <span class="tb-icon">📷</span>
+        OpenCV
+        <div class="tb-sub">Video processing</div>
+      </div>
+      <div class="tech-badge">
+        <span class="tb-icon">🌐</span>
+        HTML/CSS/JS
+        <div class="tb-sub">Frontend</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detected classes -->
+  <div class="about-section">
+    <div class="about-section-title">ປະເພດຍານພາຫະນະທີ່ກວດຈັບ</div>
+    <div class="about-row">
+      <span class="about-row-icon">🚑</span>
+      <span class="about-row-key" style="color:#ea580c;font-weight:700">Ambulance</span>
+      <span class="about-row-val">ລົດສຸກເສີນ / ລົດພະຍາບານ</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">🚒</span>
+      <span class="about-row-key" style="color:#dc2626;font-weight:700">Firetruck</span>
+      <span class="about-row-val">ລົດດັບໄຟ</span>
+    </div>
+    <div class="about-row">
+      <span class="about-row-icon">🚔</span>
+      <span class="about-row-key" style="color:#2563eb;font-weight:700">Police</span>
+      <span class="about-row-val">ລົດຕຳຫຼວດ</span>
+    </div>
+  </div>
+
+  <div class="about-version">ເວີຊັນ 1.0 · 2025–2026</div>
+
+</div>
+{% endblock %}

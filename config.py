@@ -1,0 +1,48 @@
+"""
+config.py — ตั้งค่าทั้งหมดของระบบไว้ที่เดียว
+แก้ตรงนี้ที่เดียว ไม่ต้องไปแก้โค้ดส่วนอื่น
+"""
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+
+# ===== โมเดล =====
+# วางไฟล์ที่เทรนเองในโฟลเดอร์ models/
+# ถ้าไม่พบไฟล์ใด → ระบบ fallback ไปใช้ pretrained จาก ultralytics อัตโนมัติ
+MODEL_PATH_X = BASE_DIR / "models" / "best_x.pt"   # YOLOv8x ที่เทรนเอง
+MODEL_PATH_M = BASE_DIR / "models" / "best_m.pt"   # YOLOv8m ที่เทรนเอง
+FALLBACK_X   = "yolov8x.pt"   # pretrained fallback สำหรับ x
+FALLBACK_M   = "yolov8m.pt"   # pretrained fallback สำหรับ m
+
+# compat alias (ใช้กับโค้ดเก่าที่ยังอ้าง MODEL_PATH)
+MODEL_PATH     = MODEL_PATH_X
+FALLBACK_MODEL = FALLBACK_X
+
+# ===== กล้อง 4 มุม =====
+# วางวิดีโอไว้ในโฟลเดอร์ videos/ แล้วตั้งชื่อให้ตรง
+# ถ้ามีคลิปไม่ครบ 4 → ใส่ path เดิมซ้ำได้ หรือปล่อยไฟล์ที่ไม่มีไว้ (จะขึ้น NO SIGNAL)
+CAMERA_VIDEOS = {
+    "cam1": BASE_DIR / "videos" / "north.mp4",
+    "cam2": BASE_DIR / "videos" / "east.mp4",
+    "cam3": BASE_DIR / "videos" / "south.mp4",
+    "cam4": BASE_DIR / "videos" / "west.mp4",
+}
+
+CAMERA_LABELS = {
+    "cam1": "CAM-1 · NORTH",
+    "cam2": "CAM-2 · EAST",
+    "cam3": "CAM-3 · SOUTH",
+    "cam4": "CAM-4 · WEST",
+}
+
+# ===== พารามิเตอร์การตรวจจับ =====
+CONF_THRESHOLD = 0.40    # ความมั่นใจขั้นต่ำ (0-1) ต่ำกว่านี้ไม่นับ
+IMG_SIZE       = 480     # 640 = แม่นสุด/ช้า, 480 = สมดุล, 416/320 = เร็วสุด
+DEVICE         = "cpu"   # ⭐ ถ้าการ์ดจอพอ เปลี่ยนเป็น "cuda" จะลื่นขึ้นมาก
+
+# ===== ควบคุมความเร็ว =====
+# หมายเหตุ: เวอร์ชันนี้แยก thread เล่นวิดีโอ/ตรวจจับแล้ว ภาพจึงลื่นเสมอ
+TARGET_FPS = 20          # fps ของการเล่นวิดีโอแต่ละกล้อง
+
+# ===== เกณฑ์ class ที่ถือว่าเป็น "รถฉุกเฉิน" (ใช้ปรับสัญญาณไฟ) =====
+EMERGENCY_CLASSES = {"ambulance", "firetruck", "police"}

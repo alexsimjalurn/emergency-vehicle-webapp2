@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+models/*.pt
+videos/*.mp4
+yolov8x.pt
+venv/

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}ກວດຈັບ · EVD{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/detect.css?v=3">{% endblock %}
+{% block page_title %}ເຄື່ອງມືກວດຈັບ{% endblock %}
+{% block page_sub %}YOLOv8 · ຮູບພາບ / ວິດີໂອ / Webcam Real-time{% endblock %}
+
+{% block content %}
+<div class="detect-wrap">
+
+  <!-- ===== ຮູບພາບ ===== -->
+  <div class="tab-pane hidden" id="tab-image">
+    <div class="upload-zone" id="imageDropZone">
+      <input type="file" id="imageFile" accept="image/*" hidden>
+      <div class="upload-icon">🔍</div>
+      <div class="upload-text">ຄລິກ ຫຼື ລາກຮູບພາບມາບ່ອນນີ້</div>
+      <div class="upload-hint">ຮອງຮັບ JPG · PNG · WEBP</div>
+    </div>
+    <div class="tab-actions">
+      <button class="action-btn" id="imageDetectBtn" disabled>ກວດຈັບ</button>
+    </div>
+    <div id="imageResult" class="result-area hidden">
+      <div class="result-meta" id="imageMeta"></div>
+      <div class="result-layout">
+        <img id="resultImg" class="result-img" alt="ຜົນການກວດຈັບ">
+        <div class="det-list" id="imageDetList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ວິດີໂອ ===== -->
+  <div class="tab-pane hidden" id="tab-video">
+    <div class="upload-zone" id="videoDropZone">
+      <input type="file" id="videoFile" accept="video/*" hidden>
+      <div class="upload-icon">🎬</div>
+      <div class="upload-text">ຄລິກ ຫຼື ລາກວິດີໂອມາບ່ອນນີ້</div>
+      <div class="upload-hint">ຮອງຮັບ MP4 · AVI · MOV</div>
+    </div>
+    <div class="tab-actions">
+      <button class="action-btn" id="videoDetectBtn" disabled>ປະມວນຜົນວິດີໂອ</button>
+    </div>
+    <div id="videoProgress" class="progress-row hidden">
+      <span class="spinner"></span>
+      <span id="progressText">ກຳລັງປະມວນຜົນ...</span>
+    </div>
+    <div id="videoResult" class="result-area hidden">
+      <div class="result-meta" id="videoMeta"></div>
+      <div class="video-stats" id="videoStats"></div>
+      <div id="videoSampleWrap" class="hidden">
+        <div class="sample-label">ຕົວຢ່າງ frame ທີ່ພົບລົດສຸກເສີນ</div>
+        <img id="videoSampleImg" class="result-img" alt="ຕົວຢ່າງ">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Webcam Real-time ===== -->
+  <div class="tab-pane hidden" id="tab-webcam">
+    <div class="webcam-wrap">
+      <div class="webcam-view" id="webcamView">
+        <video id="webcamVideo" autoplay muted playsinline></video>
+        <canvas id="webcamCanvas"></canvas>
+        <div class="wcam-overlay fps-overlay" id="fpsOverlay">-- FPS</div>
+        <div class="wcam-overlay model-overlay" id="modelOverlay">--</div>
+      </div>
+      <div class="webcam-actions">
+        <button class="action-btn" id="startWebcam">▶ ເລີ່ມກ້ອງ</button>
+        <button class="action-btn danger" id="stopWebcam" disabled>■ ຢຸດກ້ອງ</button>
+      </div>
+      <div id="webcamError" class="error-box hidden"></div>
+      <div id="webcamHint" class="hint-box hidden">
+        💡 FPS ຕ່ຳເກີນໄປ? ລອງປ່ຽນເປັນ <strong>YOLOv8m</strong> ຫຼືເພີ່ມ Confidence threshold
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>window.INITIAL_TAB = {{ active_tab | tojson }};</script>
+<script src="/static/detect.js?v=3"></script>
+{% endblock %}
