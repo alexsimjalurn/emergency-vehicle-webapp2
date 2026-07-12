@@ -2,164 +2,130 @@
 
 {% block title %}ຜົນການທົດສອບ · EVD{% endblock %}
 {% block page_title %}ຜົນການທົດສອບໂມເດລ{% endblock %}
-{% block page_sub %}YOLOv8x Custom · mAP50 = 97.54%{% endblock %}
+{% block page_sub %}
+  {%- if report -%}
+    {%- set primary = report.models | selectattr('key', 'equalto', report.primary) | first -%}
+    {{ primary.name }} Custom · mAP50 = {{ (primary.mAP50 * 100) | round(2) }}%
+  {%- else -%}
+    ຍັງບໍ່ມີຂໍ້ມູນຜົນການຝຶກ
+  {%- endif -%}
+{% endblock %}
+
+{% block head %}
+<style>
+  .evidence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 800px) { .evidence-grid { grid-template-columns: 1fr; } }
+  .evidence-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .evidence-card img { width: 100%; border-radius: 6px; display: block; background: #fff; }
+  .evidence-cap { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
+  .cmp-primary td { font-weight: 600; }
+  .cmp-primary { background: #eff6ff; }
+  .model-tag-sm { font-size: 10px; background: var(--blue); color: #fff; padding: 1px 6px; border-radius: 10px; margin-left: 6px; }
+</style>
+{% endblock %}
 
 {% block content %}
+{% if not report %}
+<div class="stats-wrap"><p style="color:var(--muted)">
+  ບໍ່ພົບ <code>model_report.json</code> — ໃຫ້ແລ່ນ <code>python scripts/build_model_report.py</code> ກ່ອນ
+</p></div>
+{% else %}
+{% set primary = report.models | selectattr('key', 'equalto', report.primary) | first %}
 <div class="stats-wrap">
 
-  <!-- Overall metrics -->
-  <div class="stats-section-title">ຜົນລວມ (Overall Performance)</div>
+  <!-- Overall metrics (primary model) -->
+  <div class="stats-section-title">ຜົນລວມ · {{ primary.name }} (best epoch {{ primary.best_epoch }}/{{ primary.epochs }})</div>
   <div class="metric-grid">
     <div class="metric-card">
-      <div class="metric-num">97.54<span style="font-size:16px">%</span></div>
+      <div class="metric-num">{{ (primary.mAP50 * 100) | round(2) }}<span style="font-size:16px">%</span></div>
       <div class="metric-lbl">mAP50</div>
     </div>
     <div class="metric-card">
-      <div class="metric-num green">95.03<span style="font-size:16px">%</span></div>
+      <div class="metric-num green">{{ (primary.precision * 100) | round(2) }}<span style="font-size:16px">%</span></div>
       <div class="metric-lbl">Precision</div>
     </div>
     <div class="metric-card">
-      <div class="metric-num amber">96.00<span style="font-size:16px">%</span></div>
+      <div class="metric-num amber">{{ (primary.recall * 100) | round(2) }}<span style="font-size:16px">%</span></div>
       <div class="metric-lbl">Recall</div>
     </div>
     <div class="metric-card">
-      <div class="metric-num purple">72.31<span style="font-size:16px">%</span></div>
+      <div class="metric-num purple">{{ (primary.mAP50_95 * 100) | round(2) }}<span style="font-size:16px">%</span></div>
       <div class="metric-lbl">mAP50-95</div>
     </div>
   </div>
 
-  <!-- Per-class breakdown -->
-  <div class="stats-section-title">ຜົນຕາມປະເພດ (Per-class)</div>
+  <!-- Model comparison (m vs x) -->
+  <div class="stats-section-title">ປຽບທຽບໂມເດລ</div>
   <div class="class-table-wrap">
     <table class="class-table">
       <thead>
         <tr>
-          <th>ປະເພດ</th>
-          <th>Precision</th>
-          <th>Recall</th>
-          <th>mAP50</th>
-          <th>ກຣາຟ mAP50</th>
+          <th>ໂມເດລ</th><th>Params</th><th>Precision</th><th>Recall</th><th>mAP50</th><th>mAP50-95</th><th>Best epoch</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>
-            <span class="class-dot" style="background:#ea580c"></span>
-            Ambulance
-          </td>
-          <td>96.4%</td>
-          <td>97.2%</td>
-          <td>98.3%</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar" style="width:98.3px"></div>
-              <span class="bar-val">98.3%</span>
-            </div>
-          </td>
+        {% for m in report.models %}
+        <tr class="{% if m.key == report.primary %}cmp-primary{% endif %}">
+          <td>{{ m.name }}{% if m.key == report.primary %}<span class="model-tag-sm">ຫຼັກ</span>{% endif %}</td>
+          <td>{{ m.params }}</td>
+          <td>{{ (m.precision * 100) | round(2) }}%</td>
+          <td>{{ (m.recall * 100) | round(2) }}%</td>
+          <td>{{ (m.mAP50 * 100) | round(2) }}%</td>
+          <td>{{ (m.mAP50_95 * 100) | round(2) }}%</td>
+          <td>{{ m.best_epoch }}/{{ m.epochs }}</td>
         </tr>
-        <tr>
-          <td>
-            <span class="class-dot" style="background:#dc2626"></span>
-            Firetruck
-          </td>
-          <td>94.8%</td>
-          <td>95.1%</td>
-          <td>97.1%</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar green" style="width:97.1px"></div>
-              <span class="bar-val">97.1%</span>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <span class="class-dot" style="background:#2563eb"></span>
-            Police
-          </td>
-          <td>93.9%</td>
-          <td>95.8%</td>
-          <td>97.2%</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar amber" style="width:97.2px"></div>
-              <span class="bar-val">97.2%</span>
-            </div>
-          </td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 
-  <!-- Training config + Dataset -->
+  <!-- Training config + Model info -->
   <div class="stats-section-title">ລາຍລະອຽດການຝຶກ</div>
   <div class="info-grid">
-
     <div class="info-card">
       <div class="info-card-title">Training Configuration</div>
-      <div class="info-row">
-        <span class="info-key">ໂມເດລ</span>
-        <span class="info-val">YOLOv8x</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Epochs</span>
-        <span class="info-val">100</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Image Size</span>
-        <span class="info-val">640 × 640</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Batch Size</span>
-        <span class="info-val">16</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Optimizer</span>
-        <span class="info-val">SGD</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Learning Rate</span>
-        <span class="info-val">0.01</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Device</span>
-        <span class="info-val">GPU (CUDA)</span>
-      </div>
+      <div class="info-row"><span class="info-key">Epochs</span><span class="info-val">{{ report.training.epochs }}</span></div>
+      <div class="info-row"><span class="info-key">Batch Size</span><span class="info-val">{{ report.training.batch }}</span></div>
+      <div class="info-row"><span class="info-key">Image Size</span><span class="info-val">{{ report.training.imgsz }} × {{ report.training.imgsz }}</span></div>
+      <div class="info-row"><span class="info-key">Optimizer</span><span class="info-val">{{ report.training.optimizer }}</span></div>
+      <div class="info-row"><span class="info-key">Learning Rate</span><span class="info-val">{{ report.training.lr0 }}</span></div>
+      <div class="info-row"><span class="info-key">Momentum</span><span class="info-val">{{ report.training.momentum }}</span></div>
+      <div class="info-row"><span class="info-key">Weight Decay</span><span class="info-val">{{ report.training.weight_decay }}</span></div>
+      <div class="info-row"><span class="info-key">Patience</span><span class="info-val">{{ report.training.patience }}</span></div>
+      <div class="info-row"><span class="info-key">Device</span><span class="info-val">{{ report.training.device }}</span></div>
     </div>
-
     <div class="info-card">
-      <div class="info-card-title">Dataset</div>
-      <div class="info-row">
-        <span class="info-key">ຈຳນວນ Class</span>
-        <span class="info-val">3</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">ທັງໝົດ</span>
-        <span class="info-val">2,847 ຮູບ</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Training</span>
-        <span class="info-val">2,278 ຮູບ (80%)</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Validation</span>
-        <span class="info-val">284 ຮູບ (10%)</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Test</span>
-        <span class="info-val">285 ຮູບ (10%)</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">Augmentation</span>
-        <span class="info-val">mosaic, flip, hsv</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">ແຫຼ່ງຂໍ້ມູນ</span>
-        <span class="info-val">Roboflow + custom</span>
-      </div>
+      <div class="info-card-title">ໂມເດລ ແລະ Class</div>
+      <div class="info-row"><span class="info-key">Framework</span><span class="info-val">Ultralytics YOLOv8</span></div>
+      <div class="info-row"><span class="info-key">ໂມເດລຫຼັກ</span><span class="info-val">{{ primary.name }} ({{ primary.params }})</span></div>
+      <div class="info-row"><span class="info-key">ຈຳນວນ Class</span><span class="info-val">{{ report.classes | length }}</span></div>
+      {% for c in report.classes %}
+      <div class="info-row"><span class="info-key">Class {{ loop.index }}</span><span class="info-val">{{ c }}</span></div>
+      {% endfor %}
     </div>
+  </div>
 
+  <!-- Real training evidence -->
+  <div class="stats-section-title">ຫຼັກຖານຜົນການຝຶກ ({{ primary.name }})</div>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <img src="{{ report.evidence.results }}" alt="training curves" loading="lazy">
+      <div class="evidence-cap">ເສັ້ນກຣາຟ Loss ແລະ Metrics ({{ report.training.epochs }} epochs)</div>
+    </div>
+    <div class="evidence-card">
+      <img src="{{ report.evidence.confusion }}" alt="confusion matrix" loading="lazy">
+      <div class="evidence-cap">Confusion Matrix (normalized) — ຄວາມແມ່ນຢຳຕໍ່ Class</div>
+    </div>
+    <div class="evidence-card">
+      <img src="{{ report.evidence.pr_curve }}" alt="PR curve" loading="lazy">
+      <div class="evidence-cap">Precision–Recall Curve</div>
+    </div>
+    <div class="evidence-card">
+      <img src="{{ report.evidence.predictions }}" alt="sample predictions" loading="lazy">
+      <div class="evidence-cap">ຕົວຢ່າງການທຳນາຍຈິງ (Validation set)</div>
+    </div>
   </div>
 
 </div>
+{% endif %}
 {% endblock %}

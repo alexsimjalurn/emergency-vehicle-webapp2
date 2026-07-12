@@ -1,5 +1,15 @@
+# ⚠️ PyTorch (torch + torchvision) ต้องลงแยกจากไฟล์นี้ ด้วย CUDA build ก่อนเสมอ
+# ไม่งั้น pip จะดึง CPU-only build มาทับ (GPU ใช้ไม่ได้ทั้งที่มีการ์ด)
+#
+#   GPU (CUDA 12.1):
+#     pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121
+#   CPU อย่างเดียว (เครื่องไม่มี GPU):
+#     pip install torch==2.5.1 torchvision==0.20.1
+#
+# แล้วค่อย:  pip install -r requirements.txt
+
 ultralytics>=8.0
-torch>=2.0
+lap>=0.5.12          # ByteTrack association (object tracking) — ไม่งั้น ultralytics auto-download ตอน runtime
 opencv-python>=4.8
 fastapi>=0.104
 uvicorn>=0.24
@@ -7,3 +17,4 @@ jinja2>=3.1
 python-multipart
 pillow>=10.0
 numpy
+pymongo>=4.6

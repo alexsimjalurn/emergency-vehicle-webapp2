@@ -48,19 +48,23 @@
       <span class="about-row-icon">🎯</span>
       <span class="about-row-val" style="flex:1">
         ກວດຈັບຍານພາຫະນະສຸກເສີນ 3 ປະເພດ (ລົດສຸກເສີນ, ລົດດັບໄຟ, ລົດຕຳຫຼວດ) ແບບ Real-time
-        ຈາກ 4 ກ້ອງວົງຈອນປິດໂດຍລອບສີ່ແຍກ ເພື່ອປັບສັນຍານໄຟຈາລາຈອນໂດຍອັດຕະໂນມັດ
+        ຈາກ 4 ກ້ອງວົງຈອນປິດໂດຍລອບສີ່ແຍກ ນັບຈຳນວນຄັນດ້ວຍ Object Tracking
+        ແລະ ປັບສັນຍານໄຟຈາລາຈອນໂດຍອັດຕະໂນມັດ
       </span>
     </div>
     <div class="about-row">
       <span class="about-row-icon">🤖</span>
       <span class="about-row-key">ໂມເດລ AI</span>
-      <span class="about-row-val">YOLOv8x / YOLOv8m (Ultralytics)</span>
+      <span class="about-row-val">YOLOv8x / YOLOv8m (Ultralytics) + ByteTrack</span>
     </div>
+    {% if report %}
+    {% set primary = report.models | selectattr('key', 'equalto', report.primary) | first %}
     <div class="about-row">
       <span class="about-row-icon">📊</span>
-      <span class="about-row-key">ຄວາມຖືກຕ້ອງ</span>
-      <span class="about-row-val">mAP50 = 97.54% · Precision = 95.03% · Recall = 96.00%</span>
+      <span class="about-row-key">ຄວາມຖືກຕ້ອງ ({{ primary.name }})</span>
+      <span class="about-row-val">mAP50 = {{ (primary.mAP50 * 100) | round(2) }}% · Precision = {{ (primary.precision * 100) | round(2) }}% · Recall = {{ (primary.recall * 100) | round(2) }}%</span>
     </div>
+    {% endif %}
   </div>
 
   <!-- Technology stack -->
@@ -69,7 +73,7 @@
     <div class="tech-grid">
       <div class="tech-badge">
         <span class="tb-icon">🐍</span>
-        Python 3.11
+        Python 3.12
         <div class="tb-sub">Backend language</div>
       </div>
       <div class="tech-badge">
@@ -84,8 +88,8 @@
       </div>
       <div class="tech-badge">
         <span class="tb-icon">🔥</span>
-        PyTorch
-        <div class="tb-sub">Deep learning</div>
+        PyTorch + CUDA
+        <div class="tb-sub">GPU inference</div>
       </div>
       <div class="tech-badge">
         <span class="tb-icon">📷</span>
@@ -93,9 +97,9 @@
         <div class="tb-sub">Video processing</div>
       </div>
       <div class="tech-badge">
-        <span class="tb-icon">🌐</span>
-        HTML/CSS/JS
-        <div class="tb-sub">Frontend</div>
+        <span class="tb-icon">🍃</span>
+        MongoDB
+        <div class="tb-sub">Data persistence</div>
       </div>
     </div>
   </div>

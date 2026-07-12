@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}ສະຖິຕິຍ້ອນຫຼັງ · EVD{% endblock %}
+{% block page_title %}ສະຖິຕິຍ້ອນຫຼັງ{% endblock %}
+{% block page_sub %}ຂໍ້ມູນການກວດຈັບຈາກຖານຂໍ້ມູນ{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/history.css?v=1">{% endblock %}
+
+{% block header_right %}
+<div class="range-tabs" id="rangeTabs">
+  <button class="range-btn" data-range="today">ມື້ນີ້</button>
+  <button class="range-btn active" data-range="7d">7 ມື້</button>
+  <button class="range-btn" data-range="30d">30 ມື້</button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="hist-wrap">
+
+  <!-- ===== Summary cards ===== -->
+  <div class="hist-cards" id="summaryCards">
+    <div class="hist-card"><div class="hc-num" id="sumAll">–</div><div class="hc-lbl">ທັງໝົດ</div></div>
+    <div class="hist-card amb"><div class="hc-num" id="sumAmb">–</div><div class="hc-lbl">ລົດພະຍາບານ</div></div>
+    <div class="hist-card fire"><div class="hc-num" id="sumFire">–</div><div class="hc-lbl">ລົດດັບເພີງ</div></div>
+    <div class="hist-card police"><div class="hc-num" id="sumPolice">–</div><div class="hc-lbl">ຕຳຫຼວດ</div></div>
+    <div class="hist-card peak"><div class="hc-num" id="sumPeak">–</div><div class="hc-lbl">ຊົ່ວໂມງພຸ່ງສູງ</div></div>
+  </div>
+
+  <!-- ===== Daily trend ===== -->
+  <div class="hist-panel">
+    <div class="section-title">ແນວໂນ້ມລາຍວັນ</div>
+    <div class="legend">
+      <span class="lg amb">ລົດພະຍາບານ</span>
+      <span class="lg fire">ລົດດັບເພີງ</span>
+      <span class="lg police">ຕຳຫຼວດ</span>
+    </div>
+    <div class="daily-chart" id="dailyChart"></div>
+  </div>
+
+  <div class="hist-two-col">
+    <!-- ===== Hourly distribution ===== -->
+    <div class="hist-panel">
+      <div class="section-title">ການແຈກຢາຍຕາມຊົ່ວໂມງ</div>
+      <div class="hourly-chart" id="hourlyChart"></div>
+    </div>
+
+    <!-- ===== By camera / direction ===== -->
+    <div class="hist-panel">
+      <div class="section-title">ຕາມກ້ອງ / ທິດທາງ</div>
+      <div class="camera-bars" id="cameraBars"></div>
+    </div>
+  </div>
+
+  <!-- ===== Recent detections ===== -->
+  <div class="hist-panel">
+    <div class="section-title">ການກວດຈັບຫຼ້າສຸດ</div>
+    <div class="recent-table" id="recentTable"></div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/history.js?v=1"></script>
+{% endblock %}

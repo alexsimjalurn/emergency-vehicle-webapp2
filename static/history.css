@@ -1,0 +1,88 @@
+/* history.css v1 — หน้าสະຖິຕິຍ້ອນຫຼັງ (เข้าธีม light เดิม, สีคลาส 3 สี) */
+:root {
+  --amb:    #ea580c;
+  --fire:   #dc2626;
+  --police: #2563eb;
+}
+
+/* ===== Range tabs (header) ===== */
+.range-tabs { display: flex; gap: 4px; background: var(--card); padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
+.range-btn {
+  border: none; background: transparent; color: var(--muted);
+  font-size: 12px; padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  font-family: inherit; transition: background 0.15s, color 0.15s;
+}
+.range-btn:hover { color: var(--text); }
+.range-btn.active { background: var(--blue); color: #fff; }
+
+/* ===== Layout ===== */
+.hist-wrap { display: flex; flex-direction: column; gap: 14px; }
+.hist-panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.hist-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 900px) { .hist-two-col { grid-template-columns: 1fr; } }
+
+/* ===== Summary cards ===== */
+.hist-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+@media (max-width: 800px) { .hist-cards { grid-template-columns: repeat(2, 1fr); } }
+.hist-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-left: 3px solid var(--muted); border-radius: 10px; padding: 14px 16px;
+}
+.hist-card.amb    { border-left-color: var(--amb); }
+.hist-card.fire   { border-left-color: var(--fire); }
+.hist-card.police { border-left-color: var(--police); }
+.hist-card.peak   { border-left-color: var(--green); }
+.hc-num { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.hc-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ===== Legend ===== */
+.legend { display: flex; gap: 14px; margin: 4px 0 12px; font-size: 12px; color: var(--muted); }
+.lg { display: inline-flex; align-items: center; gap: 5px; }
+.lg::before { content: ''; width: 10px; height: 10px; border-radius: 3px; }
+.lg.amb::before    { background: var(--amb); }
+.lg.fire::before   { background: var(--fire); }
+.lg.police::before { background: var(--police); }
+
+/* ===== Daily stacked bar chart ===== */
+.daily-chart {
+  display: flex; align-items: flex-end; gap: 8px;
+  height: 200px; padding-top: 8px; overflow-x: auto;
+}
+.day-col { flex: 1 0 24px; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+.day-total { font-size: 11px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.day-stack { width: 60%; max-width: 34px; min-width: 14px; display: flex; flex-direction: column-reverse; border-radius: 4px 4px 0 0; overflow: hidden; background: var(--card); }
+.day-seg { width: 100%; }
+.day-seg.amb    { background: var(--amb); }
+.day-seg.fire   { background: var(--fire); }
+.day-seg.police { background: var(--police); }
+.day-label { font-size: 10px; color: var(--muted); margin-top: 6px; white-space: nowrap; }
+
+/* ===== Hourly distribution ===== */
+.hourly-chart { display: flex; align-items: flex-end; gap: 2px; height: 150px; padding-top: 8px; }
+.hour-bar-wrap { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.hour-bar { width: 100%; background: var(--blue); border-radius: 2px 2px 0 0; min-height: 2px; transition: height 0.3s; }
+.hour-bar.peak { background: var(--green); }
+.hour-bar.empty { background: var(--border); }
+.hour-lbl { font-size: 8px; color: var(--muted); margin-top: 3px; }
+
+/* ===== Camera bars (horizontal) ===== */
+.camera-bars { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+.cam-row { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 10px; font-size: 12px; }
+.cam-name { color: var(--text); font-weight: 500; }
+.cam-track { background: var(--card); border-radius: 5px; height: 18px; overflow: hidden; }
+.cam-fill { height: 100%; background: var(--blue); border-radius: 5px; min-width: 2px; transition: width 0.3s; }
+.cam-count { text-align: right; color: var(--muted); font-weight: 600; }
+
+/* ===== Recent table ===== */
+.recent-table { display: flex; flex-direction: column; }
+.rec-row { display: grid; grid-template-columns: 28px 1fr auto auto; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.rec-row:last-child { border-bottom: none; }
+.rec-ico { font-size: 16px; }
+.rec-name { font-weight: 600; text-transform: capitalize; }
+.rec-name.amb { color: var(--amb); } .rec-name.fire { color: var(--fire); } .rec-name.police { color: var(--police); }
+.rec-cam { color: var(--muted); }
+.rec-time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.hist-empty { color: var(--muted); font-size: 13px; padding: 20px; text-align: center; }
