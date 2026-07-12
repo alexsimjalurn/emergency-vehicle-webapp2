@@ -1,6 +1,31 @@
+# ===== Python =====
 __pycache__/
-*.pyc
-models/*.pt
-videos/*.mp4
-yolov8x.pt
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ===== Virtual env =====
 venv/
+.venv/
+env/
+
+# ===== Model weights (ใหญ่ — ไม่ commit) =====
+*.pt
+models/*.pt
+
+# ===== Media (ใหญ่ — ไม่ commit) =====
+videos/*.mp4
+videos/*.avi
+videos/*.mov
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+# ===== Env / secrets =====
+.env
