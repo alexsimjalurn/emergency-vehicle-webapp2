@@ -7,8 +7,12 @@
 
 ## เฟสปัจจุบัน
 
-**Feature-complete สำหรับ present** (D1–D5 เสร็จครบใน 2026-07-12) — รัน local, GPU, MongoDB, tracking, analytics, Results เลขจริง
-เหลือ: merge เข้า main (freeze) + ผู้ใช้เตรียมคลิป/ซ้อมตาม `DEMO.md` · ของแถม (auth/Docker/signal-logic) ยังไม่ทำ (optional)
+**Feature-complete + ของแถม** (D1–D5 + preemption + Docker เสร็จ 2026-07-12) — GPU, MongoDB, tracking, analytics, Results เลขจริง, ไฟจราจรอัจฉริยะ, containerized
+เหลือ: merge เข้า main (freeze) + ผู้ใช้เตรียมคลิป/ซ้อมตาม `DEMO.md` · auth ยังไม่ทำ (optional)
+
+### ของแถม (นอกแผน 5 วัน — branch `feat/preemption-docker`)
+- **✅ Signal preemption:** ไฟเขียวทีละทิศตามคิวมาถึง (GREEN/WAIT/STOP) · hold 3 วิกันกระพริบ · toggle `SIGNAL_PREEMPTION` · verify: มี GREEN ทีละ 1 ทิศเสมอ (cam2→cam4 สลับตามคิว) · dashboard = ไฟ 3 สี + banner ทิศที่ได้เขียว
+- **✅ Docker:** `Dockerfile` + `docker-compose.yml` (CPU) + `docker-compose.gpu.yml` (GPU opt-in) + `.dockerignore` · app+mongo · models/videos = volume · compose validate ผ่าน · **ยังไม่ได้ build จริง** (Docker Desktop daemon ปิดตอนทำ) — ต้อง test build เมื่อเปิด Docker
 
 ---
 

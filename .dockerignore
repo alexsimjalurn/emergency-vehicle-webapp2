@@ -1,0 +1,22 @@
+# ===== ไม่ต้อง copy เข้า image (ลดขนาด / mount แทน) =====
+venv/
+.venv/
+.git/
+.gitignore
+__pycache__/
+*.py[cod]
+*.log
+
+# weights + videos = mount เป็น volume ตอน runtime ไม่ copy
+models/*.pt
+videos/*.mp4
+videos/*.avi
+yolov8*.pt
+
+# ไม่จำเป็นใน runtime
+notebooks/
+docs/
+.claude/
+scratchpad/
+_*.log
+_*.err

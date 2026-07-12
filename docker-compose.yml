@@ -1,0 +1,28 @@
+# EVD stack — app + MongoDB (CPU · ใช้ได้ทุกเครื่อง)
+# เปิด GPU: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    # เปิดพอร์ตออก host ถ้าอยากต่อ Compass (ไม่จำเป็นสำหรับ app)
+    # ports: ["27017:27017"]
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: evd
+    ports:
+      - "8000:8000"
+    volumes:
+      # weights + videos เก็บบน host (ใหญ่ + gitignored) → mount เข้า container
+      - ./models:/app/models:ro
+      - ./videos:/app/videos:ro
+
+volumes:
+  mongo_data:

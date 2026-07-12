@@ -1,0 +1,12 @@
+# GPU override — ใช้คู่กับ docker-compose.yml
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
+# ต้องมี: NVIDIA driver + nvidia-container-toolkit (Linux) หรือ Docker Desktop + WSL2 GPU (Windows)
+services:
+  app:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

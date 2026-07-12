@@ -120,6 +120,16 @@ YOLOv8x หนัก — รัน 4 กล้องพร้อมกันบ�
 
 ---
 
+## 🐳 รันด้วย Docker (ทางเลือก)
+
+```bash
+docker compose up --build                                           # CPU
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build   # GPU
+```
+→ http://localhost:8000 · รายละเอียด: [`docs/DOCKER.md`](docs/DOCKER.md)
+
+---
+
 ## 📚 เอกสาร
 
 | ไฟล์ | เนื้อหา |
@@ -129,3 +139,4 @@ YOLOv8x หนัก — รัน 4 กล้องพร้อมกันบ�
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | สถาปัตยกรรม · threading model · endpoints |
 | [`docs/PRODUCTION_ROADMAP.md`](docs/PRODUCTION_ROADMAP.md) | แผนพาไป production ให้ทันวัน present |
 | [`docs/DEMO.md`](docs/DEMO.md) | 🎤 Demo runbook — checklist + ลำดับนำเสนอ + Q&A + แผนสำรอง |
+| [`docs/DOCKER.md`](docs/DOCKER.md) | 🐳 รันด้วย Docker Compose (CPU / GPU) |
