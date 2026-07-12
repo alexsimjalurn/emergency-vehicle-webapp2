@@ -14,6 +14,7 @@ Endpoints:
   POST /predict/webcam_frame → ตรวจจับ 1 frame จาก webcam (base64)
 """
 import base64
+import json
 import os
 import tempfile
 import time
@@ -34,6 +35,19 @@ from .db import db
 app = FastAPI(title="Emergency Vehicle Detection")
 app.mount("/static", StaticFiles(directory=str(config.STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(config.TEMPLATES_DIR))
+
+# เสิร์ฟรูปหลักฐานผลเทรน (confusion matrix, curves, predictions) จากโฟลเดอร์ run/
+_REPORT_DIR = config.PROJECT_ROOT / "run"
+if _REPORT_DIR.is_dir():
+    app.mount("/report", StaticFiles(directory=str(_REPORT_DIR)), name="report")
+
+# โหลดผลเทรนจริง (สร้างด้วย scripts/build_model_report.py) — หน้า Results อ่านจากนี่แทน hardcode
+_REPORT_PATH = config.BASE_DIR / "model_report.json"
+try:
+    MODEL_REPORT = json.loads(_REPORT_PATH.read_text(encoding="utf-8"))
+except Exception as e:
+    print(f"[Report] โหลด model_report.json ไม่ได้ ({e}) — หน้า Results จะว่าง")
+    MODEL_REPORT = None
 
 # restore counts/log ที่ persist ไว้ (วันนี้) — restart แล้วเลขไม่รีเซ็ต · no-op ถ้า Mongo ไม่พร้อม
 state.load_from_db()
@@ -73,7 +87,10 @@ def detect_page(request: Request, tab: str = "image"):
 
 @app.get("/results")
 def results_page(request: Request):
-    return templates.TemplateResponse(request, "stats.html", {"active": "results"})
+    return templates.TemplateResponse(request, "stats.html", {
+        "active": "results",
+        "report": MODEL_REPORT,
+    })
 
 
 @app.get("/history")

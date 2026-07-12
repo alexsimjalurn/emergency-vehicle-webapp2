@@ -38,10 +38,13 @@
   - **แก้ bug encoding:** console Windows (cp1252) encode ภาษาไทย/`→` ไม่ได้ → print crash ทั้ง process · แก้ด้วย reconfigure stdout=utf-8 ใน `app/__init__.py` (ครอบทุก entry ไม่ต้องพึ่ง env)
   - **หมายเหตุ:** DB `evd.detections` มี test docs (ambulance จากคลิปทดสอบวันนี้) · ล้างได้ด้วย `db.detections.delete_many({})` ถ้าอยากเริ่มสะอาดก่อน present
 
-- **🟡 D3 (2026-07-12) — ทำ Part B เสร็จ, Part A รอไฟล์:**
-  - **✅ หน้า History (`/history`):** aggregate จาก MongoDB ตาม STATION_TZ — summary cards (total+per class+peak hour), กราฟแนวโน้มรายวัน (stacked ตาม class), การแจกแจงตามชั่วโมง 0-23, แยกตามกล้อง/ทิศ, ตารางล่าสุด · range today/7d/30d · endpoint `GET /api/history?range=` · `db.history()` + helpers · charts เป็น vanilla div (ไม่พึ่ง CDN — ปลอดภัยตอน present ไม่ต้องเน็ต)
-    - verify: endpoint คืน totals/daily/hourly/byCamera/peakHour ถูก (peakHour 13 = 06:xx UTC→13:xx ICT), page+assets 200, timezone แม่น
-  - **⏳ Part A (Results ใช้เลขจริง): ยังไม่ทำ — ติดที่ไม่มี training artifacts** (results.csv/confusion matrix) ในโปรเจกต์ · `stats.html` ยัง hardcode (97.54% ฯลฯ) · **ต้องขอไฟล์ผลเทรนจาก Colab ของผู้ใช้** แล้วค่อยทำ data-driven + parser
+- **✅ D3 เสร็จ (2026-07-12) — Analytics + Results เลขจริง:**
+  - **หน้า History (`/history`):** aggregate จาก MongoDB ตาม STATION_TZ — summary cards, กราฟรายวัน (stacked ตาม class), แจกแจงตามชั่วโมง 0-23, แยกตามกล้อง/ทิศ, ตารางล่าสุด · range today/7d/30d · `GET /api/history?range=` · charts vanilla div (ไม่พึ่ง CDN)
+  - **✅ Part A — Results ใช้เลขจริงแล้ว:** ผู้ใช้ส่ง `run/` (ผลเทรนจริง 2 โมเดล) → `scripts/build_model_report.py` parse results.csv (เลือก best-fitness epoch = best.pt) + args.yaml → `app/model_report.json` · `stats.html` render จาก report (เลิก hardcode) · mount `/report` เสิร์ฟรูปหลักฐาน (confusion matrix / curves / **val predictions จริง**)
+    - **ตัวเลขจริง:** YOLOv8x mAP50 **97.97%** · mAP50-95 **81.39%** · P 95.63% · R 96.12% (best epoch 93) · YOLOv8m mAP50 97.75% · mAP50-95 78.0% → โชว์ตารางเทียบ m vs x
+    - **⚠️ เก่า hardcode ผิด:** mAP50-95 เขียนไว้ 72.31% แต่จริง 81.39% · mAP50 เขียน 97.54% จริง 97.97% · per-class table เดิม (96.4/97.2/...) เป็นเลขแต่ง → เอาออก แทนด้วย confusion matrix จริง
+    - verify: /results 200, เลขจริงขึ้น, รูป /report เสิร์ฟ 200, ไม่มีเลขแต่งเหลือ · **run/ (44 ไฟล์, ~18MB) commit เป็นหลักฐาน** (weights .pt gitignore กันไว้)
+    - **หมายเหตุ:** ผมยังไม่ได้เห็นหน้า Results ด้วยตา (verify แค่ HTML+รูป serve) — ผู้ใช้ควรเปิดดู layout จริง
 
 ---
 

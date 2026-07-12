@@ -1,0 +1,49 @@
+{
+  "primary": "x",
+  "classes": [
+    "ambulance",
+    "firetruck",
+    "police"
+  ],
+  "models": [
+    {
+      "key": "x",
+      "name": "YOLOv8x",
+      "params": "68.2M",
+      "precision": 0.9563,
+      "recall": 0.9612,
+      "mAP50": 0.9797,
+      "mAP50_95": 0.8139,
+      "best_epoch": 93,
+      "epochs": 100
+    },
+    {
+      "key": "m",
+      "name": "YOLOv8m",
+      "params": "25.9M",
+      "precision": 0.9516,
+      "recall": 0.9561,
+      "mAP50": 0.9775,
+      "mAP50_95": 0.78,
+      "best_epoch": 100,
+      "epochs": 100
+    }
+  ],
+  "training": {
+    "epochs": 100,
+    "batch": 16,
+    "imgsz": 640,
+    "optimizer": "AdamW",
+    "lr0": 0.01,
+    "patience": 20,
+    "momentum": 0.937,
+    "weight_decay": 0.0005,
+    "device": "GPU (CUDA)"
+  },
+  "evidence": {
+    "results": "/report/yolov8x_clean100/results.png",
+    "confusion": "/report/yolov8x_clean100/confusion_matrix_normalized.png",
+    "pr_curve": "/report/yolov8x_clean100/BoxPR_curve.png",
+    "predictions": "/report/yolov8x_clean100/val_batch0_pred.jpg"
+  }
+}
