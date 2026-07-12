@@ -34,6 +34,9 @@ app = FastAPI(title="Emergency Vehicle Detection")
 app.mount("/static", StaticFiles(directory=str(config.STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(config.TEMPLATES_DIR))
 
+# restore counts/log ที่ persist ไว้ (วันนี้) — restart แล้วเลขไม่รีเซ็ต · no-op ถ้า Mongo ไม่พร้อม
+state.load_from_db()
+
 # โหลดโมเดลครั้งเดียวตอน startup
 detector = Detector()
 workers  = {cam: CameraWorker(cam, detector) for cam in config.CAMERA_VIDEOS}

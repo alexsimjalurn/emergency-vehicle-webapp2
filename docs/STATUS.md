@@ -33,6 +33,11 @@
 
 → **GPU เร็วขึ้น ~8×** · VRAM 4GB เหลือเฟือ (single-model inference serialize) · ยืนยันเลือก default `m` ถูกต้อง (fps headroom สำหรับ 4 กล้อง)
 
+- **✅ D2 เสร็จ (2026-07-12) — MongoDB persistence:** เพิ่ม `app/db.py` (connect + insert + restore, fail-safe: Mongo ล่ม → memory-only ไม่ crash) · `state.update()` เขียน event ลง collection `detections` ตอนรถโผล่ใหม่ (นอก lock) · `state.load_from_db()` restore counts(วันนี้)+log ตอน startup · config `MONGO_URI`/`MONGO_DB`/`STATION_TZ_OFFSET_HOURS` (env override ได้)
+  - **verify:** รัน→ตรวจจับ→Mongo มี docs ตรง in-memory · **restart→ counts คืนจาก DB** (`restored from DB: counts={ambulance:61}`) ไม่รีเซ็ตแล้ว
+  - **แก้ bug encoding:** console Windows (cp1252) encode ภาษาไทย/`→` ไม่ได้ → print crash ทั้ง process · แก้ด้วย reconfigure stdout=utf-8 ใน `app/__init__.py` (ครอบทุก entry ไม่ต้องพึ่ง env)
+  - **หมายเหตุ:** DB `evd.detections` มี ~79 test docs (ambulance จากคลิปทดสอบวันนี้) · ล้างได้ด้วย `db.detections.delete_many({})` ถ้าอยากเริ่มสะอาดก่อน present
+
 ---
 
 ## ⚠️ ข้อจำกัด / หนี้ทางเทคนิค (ต้องรู้ก่อนพูดว่า "production-ready")
@@ -40,7 +45,7 @@
 | หัวข้อ | สถานะปัจจุบัน | กระทบอะไร |
 |---|---|---|
 | **กล้อง** | ไฟล์ `.mp4` วนลูป | ไม่ใช่กล้องจริง — production ต้องต่อ RTSP/IP |
-| **Persistence** | state ใน memory ล้วน | restart = ข้อมูล log/counts หายหมด · ไม่มีสถิติย้อนหลัง |
+| ~~**Persistence**~~ | ✅ **แก้แล้ว (D2)** — MongoDB `evd.detections` | restart แล้ว counts/log คืนจาก DB · มีข้อมูลย้อนหลังพร้อมทำหน้า History (D3) |
 | **Object tracking** | นับ frame-level (set diff) | รถคันเดิมหลุด frame แล้วกลับมา = นับซ้ำ · เลขไม่แม่นสำหรับรายงานจริง |
 | **สัญญาณไฟ** | display อย่างเดียว | ไม่ต่อฮาร์ดแวร์ · ไม่มี logic เลือกทิศเมื่อหลายกล้อง CLEAR พร้อมกัน |
 | **หน้า Results** | metric **hardcode ใน HTML** | mAP50/precision/dataset ไม่ได้มาจากผล eval จริง — ถ้ากรรมการถามที่มาต้องมีหลักฐานรองรับ |

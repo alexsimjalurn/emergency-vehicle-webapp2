@@ -2,6 +2,7 @@
 config.py — ตั้งค่าทั้งหมดของระบบไว้ที่เดียว
 แก้ตรงนี้ที่เดียว ไม่ต้องไปแก้โค้ดส่วนอื่น
 """
+import os
 from pathlib import Path
 
 # BASE_DIR = โฟลเดอร์ app/ · PROJECT_ROOT = รากโปรเจกต์ (ที่เก็บ models/, videos/, static/, templates/)
@@ -52,3 +53,12 @@ TARGET_FPS = 20          # fps ของการเล่นวิดีโอ�
 
 # ===== เกณฑ์ class ที่ถือว่าเป็น "รถฉุกเฉิน" (ใช้ปรับสัญญาณไฟ) =====
 EMERGENCY_CLASSES = {"ambulance", "firetruck", "police"}
+
+# ===== Database (MongoDB) =====
+# อ่านจาก env ได้ (production) · default = local service ที่รันอยู่แล้วบนเครื่องนี้
+# ถ้า Mongo ไม่พร้อม → app ยังรันได้ (memory-only, ไม่ persist) ดู db.py
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
+MONGO_DB  = os.environ.get("MONGO_DB", "evd")
+
+# timezone ของสถานี (ลาว = UTC+7) — เก็บ ts เป็น UTC ใน DB, แปลงเป็นเวลานี้ตอนแสดง/สรุปรายวัน
+STATION_TZ_OFFSET_HOURS = int(os.environ.get("STATION_TZ_OFFSET_HOURS", "7"))

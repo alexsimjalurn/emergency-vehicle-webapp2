@@ -6,6 +6,7 @@ import threading
 from collections import deque
 
 from . import config
+from .db import db
 
 
 class SystemState:
@@ -37,6 +38,7 @@ class SystemState:
             d["name"].lower() for d in dets
             if d["name"].lower() in config.EMERGENCY_CLASSES
         }
+        to_persist = []                              # (name, conf) ของรถที่โผล่ใหม่ — เขียน DB นอก lock
         with self._lock:
             prev        = self._active.get(cam_id, set())
             new_arrivals = emerg_now - prev
@@ -52,12 +54,30 @@ class SystemState:
                     "conf": int(conf * 100),
                     "t":    time.strftime("%H:%M:%S"),
                 })
+                to_persist.append((name, conf))
             self._active[cam_id] = emerg_now
             self.signals[cam_id] = "CLEAR" if emerg_now else "STOP"
+
+        # persist นอก lock — DB I/O ไม่ควรถือ lock (กันบล็อก thread กล้องอื่น) · no-op ถ้า Mongo ไม่พร้อม
+        cam_label = config.CAMERA_LABELS.get(cam_id, cam_id)
+        for name, conf in to_persist:
+            db.insert_detection(name, cam_id, cam_label, conf)
 
     def set_infer_ms(self, ms):
         with self._lock:
             self.infer_ms = ms
+
+    def load_from_db(self):
+        """restore counts (วันนี้) + log ล่าสุด จาก MongoDB ตอน startup — restart แล้วเลขไม่รีเซ็ต"""
+        counts = db.today_counts()
+        log    = db.recent_log(self.log.maxlen)
+        with self._lock:
+            if counts:
+                self.counts = counts
+            if log:
+                self.log = deque(log, maxlen=self.log.maxlen)
+        if counts or log:
+            print(f"[State] restored from DB: counts={counts}, log={len(log)} entries")
 
     def snapshot(self):
         with self._lock:
