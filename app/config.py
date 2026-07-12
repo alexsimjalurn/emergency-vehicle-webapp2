@@ -62,6 +62,13 @@ CLASS_ALIASES = {"police_car": "police"}
 # True = นับ "คัน" ต่อ track_id (แม่น ไม่นับซ้ำจาก flicker) · False = fallback นับแบบ frame set-diff เดิม
 USE_TRACKING = True
 
+# ===== Signal preemption (ควบคุมไฟจราจรอัจฉริยะ) =====
+# True = ไฟเขียวทีละทิศ — ทิศที่รถฉุกเฉินมาถึงก่อนได้ GREEN, ทิศอื่นที่มีรถ = WAIT (รอคิว), ที่เหลือ = STOP
+# False = แต่ละทิศอิสระ (CLEAR/STOP เดิม)
+SIGNAL_PREEMPTION = True
+# ถือไฟเขียวต่ออีกกี่วินาทีหลังรถหลุดเฟรม (กันกระพริบ + จำลองให้รถผ่านแยกก่อนสลับ)
+GREEN_HOLD_SECONDS = 3.0
+
 # ===== Database (MongoDB) =====
 # อ่านจาก env ได้ (production) · default = local service ที่รันอยู่แล้วบนเครื่องนี้
 # ถ้า Mongo ไม่พร้อม → app ยังรันได้ (memory-only, ไม่ persist) ดู db.py

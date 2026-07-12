@@ -19,6 +19,11 @@ class SystemState:
         self._seen_tracks = set()   # (cam_id, track_id) ที่นับไปแล้ว — กันนับซ้ำเมื่อ tracking
         self.infer_ms = 0.0
 
+        # signal preemption — คิวทิศที่มีรถฉุกเฉิน (เรียงตามลำดับมาถึง) + เวลาที่เห็นรถล่าสุด (สำหรับ hold)
+        self._green_queue   = []
+        self._emerg_last_ts = {cam: 0.0 for cam in config.CAMERA_VIDEOS}
+        self.active_green   = None   # ทิศที่ได้ไฟเขียวตอนนี้ (cam_id) — โชว์บน dashboard
+
         # การตั้งค่าที่ปรับได้ผ่าน UI
         # default = "m" (YOLOv8m) — ปลอดภัยกับ VRAM 4GB เมื่อรัน 4 กล้อง · "x" ไว้ตรวจภาพเดี่ยว
         self.current_model = "m"               # "x" = YOLOv8x, "m" = YOLOv8m
@@ -65,7 +70,7 @@ class SystemState:
                     to_persist.append((name, conf, None))
                 self._active[cam_id] = emerg_now
 
-            self.signals[cam_id] = "CLEAR" if emerg_now else "STOP"
+            self._update_signals(cam_id, bool(emerg_now))
 
         # persist นอก lock — DB I/O ไม่ควรถือ lock (กันบล็อก thread กล้องอื่น) · no-op ถ้า Mongo ไม่พร้อม
         for name, conf, tid in to_persist:
@@ -78,6 +83,34 @@ class SystemState:
             "conf": int(conf * 100),
             "t":    time.strftime("%H:%M:%S"),
         })
+
+    # ---- signal control (เรียกใต้ _lock เสมอ) ----------------------------
+    def _update_signals(self, cam_id, present):
+        """อัปเดตไฟจราจร · โหมด preemption = เขียวทีละทิศตามคิว, โหมดเดิม = CLEAR/STOP อิสระ"""
+        if not config.SIGNAL_PREEMPTION:
+            self.signals[cam_id] = "CLEAR" if present else "STOP"
+            return
+
+        now = time.time()
+        if present:
+            self._emerg_last_ts[cam_id] = now
+        # ถือสถานะ "มีรถ" ต่ออีก GREEN_HOLD_SECONDS หลังรถหลุดเฟรม (กันกระพริบ + ให้รถผ่านแยก)
+        effective = present or (now - self._emerg_last_ts[cam_id] < config.GREEN_HOLD_SECONDS)
+
+        if effective and cam_id not in self._green_queue:
+            self._green_queue.append(cam_id)          # เข้าคิวตามลำดับมาถึง
+        elif not effective and cam_id in self._green_queue:
+            self._green_queue.remove(cam_id)
+
+        active = self._green_queue[0] if self._green_queue else None
+        self.active_green = active
+        for cam in self.signals:
+            if cam == active:
+                self.signals[cam] = "GREEN"           # ได้ไฟเขียว (หัวคิว)
+            elif cam in self._green_queue:
+                self.signals[cam] = "WAIT"            # มีรถแต่รอคิว (เหลือง)
+            else:
+                self.signals[cam] = "STOP"            # ไม่มีรถ (แดง)
 
     def set_infer_ms(self, ms):
         with self._lock:
@@ -104,6 +137,8 @@ class SystemState:
                 "infer_ms":      round(self.infer_ms, 1),
                 "current_model": self.current_model,
                 "current_conf":  round(self.current_conf, 2),
+                "active_green":  self.active_green,
+                "active_green_label": config.CAMERA_LABELS.get(self.active_green) if self.active_green else None,
             }
 
 

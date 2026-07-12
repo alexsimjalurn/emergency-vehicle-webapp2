@@ -29,6 +29,7 @@
 
     <div class="dash-tl-panel">
       <div class="section-title">ສັນຍານໄຟຈາລາຈອນ</div>
+      <div class="preempt-banner" id="preemptBanner">ບໍ່ມີລົດສຸກເສີນ</div>
       <div class="traffic-grid" id="trafficGrid">
         {% for cam_id, label in cameras.items() %}
         <div class="traffic-light" data-cam="{{ cam_id }}">
@@ -85,5 +86,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/app.js?v=3"></script>
+<script src="/static/app.js?v=4"></script>
 {% endblock %}

@@ -274,6 +274,16 @@ body {
 .tl-status { font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
 .tl-status.stop  { color: var(--red); }
 .tl-status.clear { color: var(--green); animation: blink 0.8s infinite; }
+.tl-status.wait  { color: #f59e0b; }
+
+.preempt-banner {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 10px; margin-bottom: 8px;
+}
+.preempt-banner.active { color: var(--green); border-color: #bbf7d0; background: #f0fdf4; }
+.preempt-banner .pb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1s infinite; }
 
 /* Alert log */
 .alert-list {
