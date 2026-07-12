@@ -36,7 +36,12 @@
 - **✅ D2 เสร็จ (2026-07-12) — MongoDB persistence:** เพิ่ม `app/db.py` (connect + insert + restore, fail-safe: Mongo ล่ม → memory-only ไม่ crash) · `state.update()` เขียน event ลง collection `detections` ตอนรถโผล่ใหม่ (นอก lock) · `state.load_from_db()` restore counts(วันนี้)+log ตอน startup · config `MONGO_URI`/`MONGO_DB`/`STATION_TZ_OFFSET_HOURS` (env override ได้)
   - **verify:** รัน→ตรวจจับ→Mongo มี docs ตรง in-memory · **restart→ counts คืนจาก DB** (`restored from DB: counts={ambulance:61}`) ไม่รีเซ็ตแล้ว
   - **แก้ bug encoding:** console Windows (cp1252) encode ภาษาไทย/`→` ไม่ได้ → print crash ทั้ง process · แก้ด้วย reconfigure stdout=utf-8 ใน `app/__init__.py` (ครอบทุก entry ไม่ต้องพึ่ง env)
-  - **หมายเหตุ:** DB `evd.detections` มี ~79 test docs (ambulance จากคลิปทดสอบวันนี้) · ล้างได้ด้วย `db.detections.delete_many({})` ถ้าอยากเริ่มสะอาดก่อน present
+  - **หมายเหตุ:** DB `evd.detections` มี test docs (ambulance จากคลิปทดสอบวันนี้) · ล้างได้ด้วย `db.detections.delete_many({})` ถ้าอยากเริ่มสะอาดก่อน present
+
+- **🟡 D3 (2026-07-12) — ทำ Part B เสร็จ, Part A รอไฟล์:**
+  - **✅ หน้า History (`/history`):** aggregate จาก MongoDB ตาม STATION_TZ — summary cards (total+per class+peak hour), กราฟแนวโน้มรายวัน (stacked ตาม class), การแจกแจงตามชั่วโมง 0-23, แยกตามกล้อง/ทิศ, ตารางล่าสุด · range today/7d/30d · endpoint `GET /api/history?range=` · `db.history()` + helpers · charts เป็น vanilla div (ไม่พึ่ง CDN — ปลอดภัยตอน present ไม่ต้องเน็ต)
+    - verify: endpoint คืน totals/daily/hourly/byCamera/peakHour ถูก (peakHour 13 = 06:xx UTC→13:xx ICT), page+assets 200, timezone แม่น
+  - **⏳ Part A (Results ใช้เลขจริง): ยังไม่ทำ — ติดที่ไม่มี training artifacts** (results.csv/confusion matrix) ในโปรเจกต์ · `stats.html` ยัง hardcode (97.54% ฯลฯ) · **ต้องขอไฟล์ผลเทรนจาก Colab ของผู้ใช้** แล้วค่อยทำ data-driven + parser
 
 ---
 

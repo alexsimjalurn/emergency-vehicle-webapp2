@@ -17,6 +17,9 @@ from . import config
 # timezone ของสถานี — ใช้แปลง UTC → local ตอนแสดงผล/หาขอบเขต "วันนี้"
 STATION_TZ = timezone(timedelta(hours=config.STATION_TZ_OFFSET_HOURS))
 
+# ลำดับ class คงที่ (ให้ตาราง/กราฟเรียงเหมือนกันทุกที่)
+CLASS_ORDER = ["ambulance", "firetruck", "police"]
+
 
 class Database:
     def __init__(self):
@@ -97,6 +100,113 @@ class Database:
     def _today_start_utc(self):
         now_local = datetime.now(STATION_TZ)
         start_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+        return start_local.astimezone(timezone.utc)
+
+    # ================= History / Analytics (aggregate ตามเวลาสถานี) =================
+
+    def history(self, range_key="7d"):
+        """สรุปสถิติย้อนหลังสำหรับหน้า History — group ตาม STATION_TZ"""
+        if not self.enabled:
+            return self._empty_history(range_key)
+        try:
+            tz = self._tz_str()
+            days = {"today": 1, "7d": 7, "30d": 30}.get(range_key, 7)
+            start = self._range_start_utc(days)
+            match = {"$match": {"ts": {"$gte": start}}}
+
+            hourly = self._hourly(match, tz)
+            peak = max(hourly, key=lambda h: h["count"])
+            return {
+                "range":     range_key,
+                "totals":    self._totals(match),
+                "daily":     self._daily(match, tz, days),
+                "hourly":    hourly,
+                "byCamera":  self._by_camera(match),
+                "peakHour":  peak["hour"] if peak["count"] else None,
+                "recent":    self.recent_log(12),
+            }
+        except Exception as e:
+            print(f"[DB] history error: {e}")
+            return self._empty_history(range_key)
+
+    def _totals(self, match):
+        rows = self.detections.aggregate([match, {"$group": {"_id": "$class", "n": {"$sum": 1}}}])
+        out = {c: 0 for c in CLASS_ORDER}
+        for r in rows:
+            out[r["_id"]] = r["n"]
+        out["all"] = sum(out[c] for c in CLASS_ORDER)
+        return out
+
+    def _daily(self, match, tz, days):
+        rows = self.detections.aggregate([
+            match,
+            {"$group": {
+                "_id": {
+                    "date": {"$dateToString": {"date": "$ts", "format": "%Y-%m-%d", "timezone": tz}},
+                    "class": "$class",
+                },
+                "n": {"$sum": 1},
+            }},
+        ])
+        by_date = {}
+        for r in rows:
+            d = r["_id"]["date"]
+            by_date.setdefault(d, {c: 0 for c in CLASS_ORDER})
+            by_date[d][r["_id"]["class"]] = r["n"]
+        # เติมวันที่ครบช่วง (วันไม่มีข้อมูล = 0) เพื่อกราฟต่อเนื่อง
+        today_local = datetime.now(STATION_TZ).date()
+        out = []
+        for i in range(days - 1, -1, -1):
+            day = today_local - timedelta(days=i)
+            key = day.strftime("%Y-%m-%d")
+            counts = by_date.get(key, {c: 0 for c in CLASS_ORDER})
+            out.append({"date": key, **counts, "total": sum(counts.values())})
+        return out
+
+    def _hourly(self, match, tz):
+        rows = self.detections.aggregate([
+            match,
+            {"$group": {"_id": {"$hour": {"date": "$ts", "timezone": tz}}, "n": {"$sum": 1}}},
+        ])
+        counts = {r["_id"]: r["n"] for r in rows}
+        return [{"hour": h, "count": counts.get(h, 0)} for h in range(24)]
+
+    def _by_camera(self, match):
+        rows = self.detections.aggregate([match, {"$group": {"_id": "$cam", "n": {"$sum": 1}}}])
+        counts = {r["_id"]: r["n"] for r in rows}
+        # เรียงตาม cam1..cam4 ตาม config เสมอ (คงลำดับทิศ N/E/S/W)
+        return [
+            {"cam": cam, "label": config.CAMERA_LABELS.get(cam, cam), "count": counts.get(cam, 0)}
+            for cam in config.CAMERA_LABELS
+        ]
+
+    def _empty_history(self, range_key):
+        days = {"today": 1, "7d": 7, "30d": 30}.get(range_key, 7)
+        today_local = datetime.now(STATION_TZ).date()
+        daily = [
+            {"date": (today_local - timedelta(days=i)).strftime("%Y-%m-%d"),
+             **{c: 0 for c in CLASS_ORDER}, "total": 0}
+            for i in range(days - 1, -1, -1)
+        ]
+        return {
+            "range": range_key,
+            "totals": {**{c: 0 for c in CLASS_ORDER}, "all": 0},
+            "daily": daily,
+            "hourly": [{"hour": h, "count": 0} for h in range(24)],
+            "byCamera": [{"cam": cam, "label": config.CAMERA_LABELS.get(cam, cam), "count": 0}
+                         for cam in config.CAMERA_LABELS],
+            "peakHour": None,
+            "recent": [],
+        }
+
+    def _tz_str(self):
+        off = config.STATION_TZ_OFFSET_HOURS
+        sign = "+" if off >= 0 else "-"
+        return f"{sign}{abs(off):02d}:00"
+
+    def _range_start_utc(self, days):
+        now_local = datetime.now(STATION_TZ)
+        start_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=days - 1)
         return start_local.astimezone(timezone.utc)
 
 

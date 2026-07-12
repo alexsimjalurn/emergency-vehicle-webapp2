@@ -29,6 +29,7 @@ from . import config
 from .detector import Detector
 from .camera import CameraWorker
 from .state import state
+from .db import db
 
 app = FastAPI(title="Emergency Vehicle Detection")
 app.mount("/static", StaticFiles(directory=str(config.STATIC_DIR)), name="static")
@@ -75,6 +76,11 @@ def results_page(request: Request):
     return templates.TemplateResponse(request, "stats.html", {"active": "results"})
 
 
+@app.get("/history")
+def history_page(request: Request):
+    return templates.TemplateResponse(request, "history.html", {"active": "history"})
+
+
 @app.get("/about")
 def about_page(request: Request):
     return templates.TemplateResponse(request, "about.html", {"active": "about"})
@@ -102,6 +108,12 @@ def stats():
     snap = state.snapshot()
     snap["model_info"] = detector.get_model_info(snap["current_model"])
     return JSONResponse(snap)
+
+
+@app.get("/api/history")
+def api_history(range: str = "7d"):
+    valid = {"today", "7d", "30d"}
+    return JSONResponse(db.history(range if range in valid else "7d"))
 
 
 # ===== Settings API (for dashboard model/conf selector) =====
